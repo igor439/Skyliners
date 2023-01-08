@@ -14,6 +14,7 @@ struct peca
     Peca* p;
 };
 
+
 struct jogador
 {
     int ID;
@@ -26,13 +27,14 @@ struct jogador
 
 
 Peca** Init(void);
-int PorpecaA(Peca** tab, int l, int c, int peca);
+
+int PorpecaA(Peca** tab, int l, int c, int tipo, Peca* peca);
 
 void Render(Peca** tab){
 
 
     printf("===============================================================================================\n");
-    printf("|                                 jOGADAS DISPONIVEIS                                          |\n");
+    printf("|                                 JOGADAS DISPONIVEIS                                          |\n");
     printf("|  1 : Andar   2 : Parque    3 : Teto                                                          |\n");
     printf("|  4 : Visão Norte    5 : Visão Sul      6 : Visão Leste     7 : Visão Oeste               |\n");
     printf("|                                                                                              |\n");
@@ -74,21 +76,21 @@ void Render(Peca** tab){
         
         for (int l = 0; l < 5; l++)
         {
-            if(tab[l][i].parque == 0 && tab[l][i].andar == 0)
+            if(tab[i][l].parque == 0 && tab[i][l].andar == 0)
             {
                 printf ("    ");
             }
-            else if (tab[l][i].parque == 1) 
+            else if (tab[i][l].parque == 1) 
             {
                 printf ("[ 1]");
             }
-            else if (tab[l][i].teto == 1)
+            else if (tab[i][l].teto == 1)
             {
-                printf("( %d)", tab[l][i].andar);
+                printf("( %d)", tab[i][l].andar);
             }
             else
             {
-                printf("  %d ", tab[l][i].andar);
+                printf("  %d ", tab[i][l].andar);
             }	
             
             if (l % 5 == 0);
@@ -221,7 +223,21 @@ Peca** Init(void) {
     int n;
     for (int i = 0; i < 6; i++)
     {
-        n = PorpecaA(tab, l[i], c[i], 1);
+        Peca* nova = (Peca*) malloc(sizeof(Peca));
+
+        if (nova == NULL)
+        {
+            printf("Não foi possivel alocar memoria");
+            exit(1);
+        }
+            
+
+        nova->andar = 1;
+        nova->teto = 0;
+        nova->parque = 0;
+        nova->p = NULL;
+        
+        n = PorpecaA(tab, l[i], c[i], 1, nova);
     }
 
     if (n == 0)
@@ -237,12 +253,16 @@ Peca** Init(void) {
     
 
 }
+// Atualçiaza os parametros no jogo.h
+Jogador** Criarjogadores() {
 
-Jogador** Criarjogadores(int jID, char namej[]) {
+    char **jgNomes = (char**) malloc(4*sizeof(char*));
+    jgNomes[0] = "Sul";
+    jgNomes[1] = "Oeste";
+    jgNomes[2] = "Norte";
+    jgNomes[3] = "Leste";
 
-    int Id = jID;
-
-    Jogador** jog = (Jogador**) malloc(sizeof(Jogador*));
+    Jogador** jog = (Jogador**) malloc(4*sizeof(Jogador*));
 
     if (jog == NULL)
     {
@@ -250,96 +270,101 @@ Jogador** Criarjogadores(int jID, char namej[]) {
         exit(1);
     }
 
-    (*jog) = (Jogador*) malloc(sizeof(Jogador));
+    for (int i = 0; i < 4; i++){
 
-    if ((*jog) == NULL)
-    {
-        printf("Não foi possivel alocar memória");
-        exit(1);
-    }
+        jog[i] = (Jogador*) malloc(sizeof(Jogador));
 
-    (*jog)->ID = Id;
-    (*jog)->numAndar = 12;
-    (*jog)->numParque = 1;
-    (*jog)->numTeto = 2;
-    (*jog)->name = (char*) namej;
+        if (jog[i] == NULL)
+        {
+            printf("Não foi possivel alocar memória");
+            exit(1);
+        }
+
+        (jog[i])->numAndar = 12;
+        (jog[i])->numParque = 1;
+        (jog[i])->numTeto = 2;
+        (jog[i])->name = jgNomes[i];
     
-
-
-    Peca* parque = (Peca*) malloc(sizeof(Peca));
-
-    if (parque == NULL)
-    {
-        printf("Não foi possivel alocar memória");
-        exit(1);
-    }  
-
-    parque->parque = 1;
-    parque->andar = 0;
-    parque->teto = 0;
-    parque->p = NULL;
-
-    (*jog)->pjInicio = parque;
-
-    for (int j = 0; j < 14; j++)
-    {
-        if (j < 2)
-        {
-            Peca* nova = (Peca*) malloc(sizeof(Peca));
-
-            if (nova == NULL)
-            {
-                printf("Não foi possivel alocar memoria");
-                exit(1);
-            }
-                
-
-            nova->andar = 0;
-            nova->teto = 1;
-            nova->parque = 0;
-            nova->p = NULL;
-
-            Peca* aux1 = (*jog)->pjInicio;
-            Peca* aux2 = (*jog)->pjInicio;
-
-            while (aux2 != NULL)
-            {
-                aux1 = aux2;
-                aux2 = aux1->p;
-            }
-
-            aux1->p = nova;
-
-        }
-        else if (j > 2)
-        {
-            Peca* nova = (Peca*) malloc(sizeof(Peca));
-
-            if (nova == NULL)
-            {
-                printf("Não foi possivel alocar memoria");
-                exit(1);
-            }
-                
-
-            nova->andar = 1;
-            nova->teto = 0;
-            nova->parque = 0;
-            nova->p = NULL;
-
-            Peca* aux1 = (*jog)->pjInicio;
-            Peca* aux2 = (*jog)->pjInicio;
-
-            while (aux2 != NULL)
-            {
-                aux1 = aux2;
-                aux2 = aux1->p;
-            }
-
-            aux1->p = nova;
-        }
         
+
+
+        Peca* parque = (Peca*) malloc(sizeof(Peca));
+
+        if (parque == NULL)
+        {
+            printf("Não foi possivel alocar memória");
+            exit(1);
+        }  
+
+        parque->parque = 1;
+        parque->andar = 0;
+        parque->teto = 0;
+        parque->p = NULL;
+
+        (jog[i])->pjInicio = parque;
+
+        for (int j = 0; j < 14; j++)
+        {
+            if (j < 2)
+            {
+                Peca* nova = (Peca*) malloc(sizeof(Peca));
+
+                if (nova == NULL)
+                {
+                    printf("Não foi possivel alocar memoria");
+                    exit(1);
+                }
+                    
+
+                nova->andar = 0;
+                nova->teto = 1;
+                nova->parque = 0;
+                nova->p = NULL;
+
+                Peca* aux1 = (jog[i])->pjInicio;
+                Peca* aux2 = (jog[i])->pjInicio;
+
+                while (aux2 != NULL)
+                {
+                    aux1 = aux2;
+                    aux2 = aux1->p;
+                }
+
+                aux1->p = nova;
+
+            }
+            else if (j >= 2)
+            {
+                Peca* nova = (Peca*) malloc(sizeof(Peca));
+
+                if (nova == NULL)
+                {
+                    printf("Não foi possivel alocar memoria");
+                    exit(1);
+                }
+                    
+
+                nova->andar = 1;
+                nova->teto = 0;
+                nova->parque = 0;
+                nova->p = NULL;
+
+                Peca* aux1 = (jog[i])->pjInicio;
+                Peca* aux2 = (jog[i])->pjInicio;
+
+                while (aux2 != NULL)
+                {
+                    aux1 = aux2;
+                    aux2 = aux1->p;
+                }
+
+                aux1->p = nova;
+            }
+            
+        }
+
     }
+    
 
     return jog;
     
@@ -347,76 +372,60 @@ Jogador** Criarjogadores(int jID, char namej[]) {
 }
 
 
-int PorpecaA(Peca** tab, int c, int l, int peca) 
+int PorpecaA(Peca** tab, int l, int c, int tipo, Peca* peca ) 
 {
 
-    if(peca <= 0 || peca > 3)
+    if(tipo <= 0 || tipo > 3)
     {
         printf("uso invalido");
         exit(1);
     }
 
-    if (peca == 1)
+    if (tipo == 1 && peca->andar == 1)
     {
-        if (tab[c][l].parque == 1)
+        if (tab[l][c].parque == 1)
         {
             printf("Movimnto inválido, andares não podem sobrepôr parques\n");
             Sleep(2000);
             return 0;
         }
 
-        if (tab[c][l].teto == 1)
+        if (tab[l][c].teto == 1)
         {
-            printf("Movimnto inválido, amadres não podem  sobrepôr tetos\n");
+            printf("Movimnto inválido, andares não podem  sobrepôr tetos\n");
             Sleep(2000);
             return 0;
         }
 
-        if(tab[c][l].p == NULL && tab[c][l].andar == 0)
+        if(tab[l][c].p == NULL)
         {
-            tab[c][l].andar = 1;
+                
+            tab[l][c].andar = 1;
+            tab[l][c].p = peca;
+
         }
-        else if(tab[c][l].p == NULL && tab[c][l].andar == 1)
+        else if(tab[l][c].p != NULL)
         {
-            Peca* nova = (Peca*) malloc(sizeof(Peca));
-            if (nova == NULL)
-            {
-                printf("Não fi possivel alocar memoria");
-                exit(1);
-            }
-            
-            nova->andar = 1;
-            nova->parque = 0;
-            nova->teto = 0;
-            nova->p = NULL;
+            Peca* aux1 = tab[l][c].p;
+            Peca* aux2 = tab[l][c].p;
 
-            tab[c][l].p = nova;
-            tab[c][l].andar++;
-        }  
-        else
-        {
-            Peca* nova = (Peca*) malloc(sizeof(Peca));
-            if (nova == NULL)
+            while (aux2 != NULL)
             {
-                printf("Não fi possivel alocar memoria");
-                exit(1);
+                aux1 = aux2;
+                aux2 = aux1->p;
             }
 
-            nova->andar = 1;
-            nova->parque = 0;
-            nova->teto = 0;
-
-            nova->p = tab[c][l].p;
-            tab[c][l].p = nova;
-            tab[c][l].andar++;
+            aux1->p = peca;
+            tab[l][c].andar++;
         } 
     }
-    else if (peca == 2)
+    else if (tipo == 2 && peca->parque == 1)
     {
-        if (tab[c][l].andar == 0 && tab[c][l].teto == 0)
+        if (tab[l][c].andar == 0 && tab[l][c].teto == 0)
         {
-            tab[c][l].parque = 1;
-            tab[c][l].andar = 1;
+            tab[l][c].parque = 1;
+            tab[l][c].andar = 1;
+            tab[l][c].p = peca;
         }
         else
         {
@@ -426,25 +435,26 @@ int PorpecaA(Peca** tab, int c, int l, int peca)
         }
         
     }
-    else
+    else if (tipo == 3 && peca->teto == 1)
     {
-        if (tab[c][l].andar > 0 && tab[c][l].parque == 0)
+        if (tab[l][c].andar > 0 && tab[l][c].parque == 0)
         {
-            Peca* nova = (Peca*) malloc(sizeof(Peca));
-            if (nova == NULL)
+
+
+            Peca* aux1 = tab[l][c].p;
+            Peca* aux2 = tab[l][c].p;
+
+            while (aux2 != NULL)
             {
-                printf("não foi possivel alocar memoria");
-                exit(1);
+                aux1 = aux2;
+                aux2 = aux1->p;
             }
 
-            nova->andar = 0;
-            nova->parque = 1;
-            nova->teto = 0;
-            
-            nova->p = tab[c][l].p;
-            tab[c][l].p = nova;
-            tab[c][l].andar++; 
-            tab[c][l].teto = 1;
+            aux1->p = peca;
+                        
+            tab[l][c].teto = 1;
+            tab[l][c].andar++; 
+
         }
         else
         {
@@ -454,437 +464,391 @@ int PorpecaA(Peca** tab, int c, int l, int peca)
         
         
     }
-    
+    else{
+        
+        printf("Peça e jogada não se correspondem, falha de implementação");
+    }
+
     
     return 1;
 
 }
 
-int vista (int p, Peca** tab) 
-{
+
+void torre(char ** grafico,  int pontos, int pespectiva, int fatiaA, int fatiaB){
+
+    int corretor = 0;
+
+    corretor = pontos;
+    if (corretor >= 5){
+        corretor = 4;
+    }
+
     
-    char img[20][45];
-    int y = 19, x = 0;
-    int base = 8;
-    int indx, indy;
-    int maior = 0;
-    int altura;
-    int pespec = 0;
-    int pontos = 0;
-
-    for (int  i = 0; i < 20; i++)
-    {
-        for (int j = 0; j < 45; j++)
-        {
-            img[i][j] = ' ';
-        }
+    
+    for (int i = 0; i < corretor; i++){
         
+        for(int j = fatiaA + pespectiva; j <= fatiaB - pespectiva; j++){
+
+            grafico[i][j] = '#';
+        }
+
+    
     }
 
-
-    if (p == 5)
-    {
-        indy = 0;
-        indx = 4;
-    }
-    else
-    {
-        indy = 4;
-        indx = 0;
-
-        if (p == 7)
-        {
-            indy = 0;
-            indx = 0;
-        }
-        else if (p == 6)
-        {
-            indy = 4;
-            indx = 4;
-        }
-        
-        
-    }
-
-    if (p == 4 || p == 5)
-    {
-       
-        for (int i = 0; i < 5; i++)
-        {
-            for (int j = 0; j < 5; j++)
-            {
-
-                
-                if (maior <  tab[indy][indx].andar)
-                {
-                   if (maior == 0)
-                   {
-                       pontos++;
-                   }
-                   else
-                   {
-                       pontos--;
-                       pontos = pontos + 2;
-                   }
-                   
-
-                    altura = maior;
-                    maior = tab[indy][indx].andar;
-
-                    altura = maior - altura;
-
-                    for (int h = 0; h < altura; h++)
-                    {
-                        
-                        int cont = 0;
-                        
-                        for (int v = 0; v < pespec; v++)
-                        {
-                            img[y][x] = ' ';
-                            x++;
-                            cont++;
-                        }
-
-                        for (int l = 0; l < base; l++)
-                        {
-                            img[y][x] = '#';
-                            x++;
-                            cont++;
-                        }
-                        
-                        y--;
-                        x = x - cont;
-
-                    }
-                     
-                }
-
-                if (p == 5)
-                {
-                    if (indx == 0)
-                    {
-                        indx = 5;
-                    }
-                    
-                    indx--;
-                }
-                else
-                {
-                    if (indx == 4)
-                    {
-                        indx =  -1;
-                    }
-                    
-                    indx++;
-                 
-                }
-                if (pespec < 4)
-                {
-                    pespec++;
-                }
-                base = base - 2;
-                if (base == 0 )
-                {
-                    base = 1;
-                }
-                
-                
-                
-            }
-
-            if (p == 4)
-            {
-                indy--;
-                y = 19;
-                x = x + 9;
-                maior = 0;
-                base = 8;
-                pespec = 0;
-               
-            }
-            else
-            {
-                indy++;
-                y = 19;
-                x = x + 9;
-                maior = 0;
-                base = 8;
-                pespec = 0;
-                
-            }
-            
-            
-        }
-        
-    }
-    else
-    {
-       for (int i = 0; i < 5; i++)
-        {
-            for (int j = 0; j < 5; j++)
-            {
    
-                if (maior <  tab[indy][indx].andar)
-                {
-                    altura = maior;
-                    maior = tab[indy][indx].andar;
-
-                    altura = maior - altura;
-                    pontos++;
-                   
-
-                    for (int h = 0; h < altura; h++)
-                    {
-                        
-                        int cont = 0;
-                        
-                        for (int v = 0; v < pespec; v++)
-                        {
-                            img[y][x] = ' ';
-                            x++;
-                            cont++;
-                        }
-
-                        for (int l = 0; l < base; l++)
-                        {
-                            img[y][x] = '#';
-                            x++;
-                            cont++;
-                        }
-                        
-                        y--;
-                        x = x - cont;
-
-                    }
-                     
-                }
-
-                if (p == 6)
-                {
-                    if (indy == 0)
-                    {
-                        indy = 5;
-                    }
-                    
-                    indy--;
-                }
-                else
-                {
-                    if (indy == 4)
-                    {
-                        indy =  -1;
-                    }
-                    
-                    indy++;
-                 
-                }
-                if (pespec < 4)
-                {
-                    pespec++;
-                }
-                base = base - 2;
-                if (base == 0 )
-                {
-                    base = 1;
-                }
-                
-                
-                
-            }
-
-            if (p == 7)
-            {
-                indx++;
-                y = 19;
-                x = x + 9;
-                maior = 0;
-                base = 8;
-                pespec = 0;
-               
-            }
-            else
-            {
-                indx--;
-                y = 19;
-                x = x + 9;
-                maior = 0;
-                base = 8;
-                pespec = 0;
-                
-            }
-            
-            
-        }
-    }
-    
-    
-    
-
-    
-
-    for (int i = 0; i < 20; i++)
-    {
-        for (int j = 0; j < 45; j++)
-        {
-            printf("%c",img[i][j]);
-        }
-        printf("\n");
-        
-    }
-
-    printf("-=============================================\n");
-    switch (p)
-        {
-        case 4:
-            printf("NORTE ");
-            break;
-        case 5:
-            printf("SUL ");
-            break;
-        case 6:
-            printf("LESTE ");
-            break;
-        case 7:
-            printf("OESTE ");
-            break;
-        }
-    
-    Sleep(3000);
-
-    return pontos;
     
 }
 
-int FazerJogada (int p, Jogador** jogador,Peca** tab, int c, int l) {
 
-    Peca* aux1 = (*jogador)->pjInicio;
-    Peca* aux2 = NULL;
+int vista (int vista, Peca** tab) 
+{
 
-   
 
-    if (p == 1)
-    {
-        if ((*jogador)->numAndar == 0)
-        {
-            printf("Você não tem mais dessa peça");
-            Sleep(2000);
-            return -1;
+
+
+
+    char** grafico;
+
+    grafico = malloc(5*sizeof(char*));
+
+    if(grafico ==  NULL){
+        printf("não foi poddivel alocar memoria");
+        exit(1);
+    }
+
+
+    
+
+    for (int i = 0; i < 5; i++){
+
+        grafico[i] = malloc(60*sizeof(char));
+
+        if(grafico[i] ==  NULL){
+        printf("não foi poddivel alocar memoria");
+        exit(1);
         }
 
-         if (tab[c][l].parque == 1)
-        {
-            printf("Movimnto inválido, andares não podem sobrepôr parques\n");
-            Sleep(2000);
-            return -1;
+        for (int j = 0; j < 60; j++){
+            grafico[i][j] = ' ';
         }
-
-        if (tab[c][l].teto == 1)
-        {
-            printf("Movimnto inválido, amadres não podem  sobrepôr tetos\n");
-            Sleep(2000);
-            return -1;
-        }
-
-        if (aux1 != NULL && aux1->andar == 1)
-       {
-           (*jogador)->pjInicio = aux1->p;
-           (*jogador)->numAndar--;
-           free(aux1);
-           return (*jogador)->numAndar;
-
-       }
-
-       while (aux1 != NULL && aux1->andar != 1)
-       {
-           aux2 = aux1;
-           aux1 = aux2->p;
-       }
-
-       aux2->p = aux1->p;
+    }
 
 
-       (*jogador)->numAndar--;
-       free(aux1);
-       return (*jogador)->numAndar;
+    int fatiaA = 1;
+    int fatiaB = 11;
 
+
+    if(vista == 4){
+
+        for (int i = 0; i < 5; i++){
+
+            int maior = 0;
+
+            for (int j = 0; j < 5; j++){
+
+
+                if( maior < tab[j][i].andar){
+
+                    
+
+                    maior = tab[j][i].andar;
+                    torre(grafico,maior,j, fatiaA ,fatiaB);
+                    
+                    
+
+                }
+
+                
+
+
+            }
+
+
+            fatiaA = fatiaB + 1;
+            fatiaB = fatiaB + 10;
+            
          
 
+        }
+
+    }else if (vista == 5){
+
+
+
+
+        for (int i = 0; i < 5; i++){
+
+            int maior = 0;
+
+            for (int j = 4; j >= 0; j--){
+
+
+                if( maior < tab[j][i].andar){
+
+                    
+
+                    maior = tab[j][i].andar;
+                    
+                    torre(grafico,maior,4-j, fatiaA ,fatiaB);
+                    
+                    
+
+                }
+
+                
+
+
+            }
+
+
+            fatiaA = fatiaB + 1;
+            fatiaB = fatiaB + 10;
+            
+         
+
+        }
+
+
+
+
     }
-    else if (p == 2)
-    {
-        if ((*jogador)->numParque == 0)
-        {
-            printf("Você não tem mais dessa peça");
-            Sleep(2000);
-            return  -1;
-        }
-        if (tab[c][l].andar != 0 && tab[c][l].teto != 0)
-        {
-            printf("Parques só podem ser colocados no chão\n");
-            Sleep(2000);
-            return -1;
-        }
-       if (aux1 !=  NULL && aux1->parque == 1)
-       {
-           (*jogador)->pjInicio = aux1->p;
-           free(aux1);
-           (*jogador)->numParque--;
-       
+    else if(vista == 6){
 
-          return 1;
-       }
-        
+
+        for (int i = 0; i < 5; i++){
+
+            int maior = 0;
+
+            for (int j = 4; j >= 0; j--){
+
+
+                if( maior < tab[i][j].andar){
+
+                    
+
+                    maior = tab[i][j].andar;
+                    
+                    torre(grafico,maior,4-j, fatiaA ,fatiaB);
+                    
+                    
+
+                }
+
+                
+
+
+            }
+
+
+            fatiaA = fatiaB + 1;
+            fatiaB = fatiaB + 10;
+            
+         
+
+        }
+
+
     }
-    else if (p == 3)
-    {
-        if ((*jogador)->numTeto == 0)
-        {
-            printf("Você não tem mais dessa peça");
-            Sleep(2000);
-            return -1;
+    else if(vista == 7){
+
+        for (int i = 0; i < 5; i++){
+
+            int maior = 0;
+
+            for (int j = 0; j < 5; j++){
+
+
+                if( maior < tab[i][j].andar){
+
+                    
+
+                    maior = tab[i][j].andar;
+                    
+                    torre(grafico,maior,j, fatiaA ,fatiaB);
+                    
+                    
+
+                }
+
+                
+
+
+            }
+
+
+            fatiaA = fatiaB + 1;
+            fatiaB = fatiaB + 10;
+            
+         
+
         }
 
-        if (tab[c][l].andar > 0 && tab[c][l].parque == 1)
-        {
-            printf("Tetos não podem ser colocados no chão ou em cima de parques");
-            return -1;
+    }
+
+
+    if(vista == 6 || vista == 4){
+
+        for (int i = 4; i >= 0; i--){
+
+        
+            for (int j = 60; j >= 0; j--){
+                printf( "%c", grafico[i][j]);
+            }
+            
+            printf("\n");
         }
-        
+
+
+    }
+    else{
+
+        for (int i = 4; i >= 0; i--){
 
         
-        if (aux1 !=  NULL && aux1->teto == 1)
+            for (int j = 0; j < 60; j++){
+                printf( "%c", grafico[i][j]);
+            }
+            
+            printf("\n");
+        }
+
+
+    }
+    
+    
+
+    for (int j = 0; j < 60; j++){
+        printf( "=");
+    }
+
+  
+
+
+
+
+
+
+
+}
+
+void PrintJ (Jogador** jogadores, int jgRef){
+
+    printf("\n%s\n", (jogadores[jgRef])->name);
+    printf("Andar: %d\n", (jogadores[jgRef])->numAndar);
+    printf("Parque: %d\n", (jogadores[jgRef])->numParque);
+    printf("Teto: %d\n", (jogadores[jgRef])->numTeto);
+
+
+}
+
+int FazerJogada (Jogador** jogadores,Peca** tab, int l, int c, int tipo, int jgRef){
+
+    if (jgRef < 0 && jgRef > 3){
+        printf("Uso inválido,jogador ref incorreta");
+        exit(1);
+    }
+
+    if (tipo == 1){
+
+        if(jogadores[jgRef]->numAndar == 0)
         {
-            (*jogador)->pjInicio = aux1->p;
-
-            (*jogador)->numTeto--;
-            free(aux1);
+            printf("Jogador não possui a peça");
             return 1;
         }
 
-        while (aux1 != NULL && (aux1->andar != 1 && aux1->parque != 0 && aux1->teto != 1))
+        Peca* jgPecaRef = jogadores[jgRef]->pjInicio;
+        Peca* jgPecaRefAux = jgPecaRef;
+
+        while (jgPecaRefAux->andar != 1)
         {
-            aux2 = aux1;
-            aux1 = aux2->p;
+            jgPecaRef = jgPecaRefAux;
+            jgPecaRefAux = jgPecaRef->p;
+            
+
         }
 
-        aux2->p = aux1->p;
 
-        (*jogador)->numTeto--;
-        free(aux1);
-        return 1;
+        if (jgPecaRefAux->p == NULL){
+            jgPecaRef->p = NULL;
+            PorpecaA(tab, l, c, tipo, jgPecaRefAux);
+        }
+        else{
+
+            jgPecaRef->p = jgPecaRefAux->p;
+            jgPecaRefAux->p == NULL;
+            PorpecaA(tab, l, c, tipo, jgPecaRefAux);
+
+        }
+    
+
+    }
+    else if (tipo ==  2){
+
+
+        if(jogadores[jgRef]->numTeto == 0)
+        {
+            printf("Jogador não possui a peça");
+            return 1;
+        }
+
+        Peca* jgPecaRef = jogadores[jgRef]->pjInicio;
+        Peca* jgPecaRefAux = jgPecaRef;
+
+        while (jgPecaRefAux->teto != 1)
+        {
+            jgPecaRef = jgPecaRefAux;
+            jgPecaRefAux = jgPecaRef->p;
+            
+
+        }
+
+
+        if (jgPecaRefAux->p == NULL){
+            jgPecaRef->p = NULL;
+            PorpecaA(tab, l, c, tipo, jgPecaRefAux);
+        }
+        else{
+
+            jgPecaRef->p = jgPecaRefAux->p;
+            jgPecaRefAux->p == NULL;
+            PorpecaA(tab, l, c, tipo, jgPecaRefAux);
+
+        }
+
+    }
+    else{
+
+        if(jogadores[jgRef]->numTeto == 0)
+        {
+            printf("Jogador não possui a peça");
+            return 1;
+        }
+
+        Peca* jgPecaRef = jogadores[jgRef]->pjInicio;
+        Peca* jgPecaRefAux = jgPecaRef;
+
+        while (jgPecaRefAux->teto != 1)
+        {
+            jgPecaRef = jgPecaRefAux;
+            jgPecaRefAux = jgPecaRef->p;
+            
+
+        }
+
+
+        if (jgPecaRefAux->p == NULL){
+            jgPecaRef->p = NULL;
+            PorpecaA(tab, l, c, tipo, jgPecaRefAux);
+        }
+        else{
+
+            jgPecaRef->p = jgPecaRefAux->p;
+            jgPecaRefAux->p == NULL;
+            PorpecaA(tab, l, c, tipo, jgPecaRefAux);
+
+        }
+
     }
 
 }
-
-void PrintJ (Jogador** jogador) {
-
-
-
-    printf("\n%s\n", (*jogador)->name);
-    printf("Andar: %d\n", (*jogador)->numAndar);
-    printf("Parque: %d\n", (*jogador)->numParque);
-    printf("Teto: %d\n", (*jogador)->numTeto);
-
-
-}
-
