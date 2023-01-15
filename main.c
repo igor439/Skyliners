@@ -42,11 +42,7 @@ int main(){
         printf("Qual sua jogada? ");
         jogada = getchar();
 
-        if(fimDeRodada == jogadordadez){
-            jogando = false;
-            break;
-                
-        }
+        
 
 
 
@@ -65,12 +61,21 @@ int main(){
                 }
 
                 if(ganhar == -1 && fimDeRodada == -2){
-                    fimDeRodada = jogadordadez;
+                    fimDeRodada = 3;
                     jogadordadez++;
               
                 }
                 else if(ganhar == -1 && fimDeRodada != -2){
                     jogadordadez++;
+                }
+
+                if(fimDeRodada == jogadordadez - 1){
+                    jogando = false;
+                    system("cls");
+                    render(tab);
+                    
+                    break;
+                        
                 }
             
             
@@ -78,18 +83,38 @@ int main(){
 
             case 2:
 
+
                
                if(!validarJogada(jg,tab,jogada - 48,jogadordadez)){
                     jogadordadez++;
                 }
+
+                if(fimDeRodada == jogadordadez - 1){
+                    system("cls");
+                    render(tab);
+                    jogando = false;
+                    break;
+                        
+                }
+
+
                 break;
 
             case 3:
 
-
                 if(!validarJogada(jg,tab,jogada - 48,jogadordadez)){
                     jogadordadez++;
                 }
+
+                if(fimDeRodada == jogadordadez - 1){
+                    jogando = false;
+                    system("cls");
+                    render(tab);
+                    break;
+                        
+                }
+
+
                 break;
 
             case 4:

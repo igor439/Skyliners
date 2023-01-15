@@ -490,11 +490,6 @@ void torre(char ** grafico,  int pontos, int pespectiva, int fatiaA, int fatiaB)
     int corretor = 0;
 
     corretor = pontos;
-    if (corretor >= 5){
-        corretor = 4;
-    }
-
-    
     
     for (int i = 0; i < corretor; i++){
         
@@ -520,7 +515,7 @@ int vista (int vista, Peca** tab) {
 
     char** grafico;
 
-    grafico = malloc(5*sizeof(char*));
+    grafico = malloc(48*sizeof(char*));
 
     if(grafico ==  NULL){
         printf("não foi poddivel alocar memoria");
@@ -530,7 +525,7 @@ int vista (int vista, Peca** tab) {
 
     
 
-    for (int i = 0; i < 5; i++){
+    for (int i = 0; i < 48; i++){
 
         grafico[i] = malloc(60*sizeof(char));
 
@@ -699,7 +694,7 @@ int vista (int vista, Peca** tab) {
 
     if(vista == 6 || vista == 4){
 
-        for (int i = 4; i >= 0; i--){
+        for (int i = 47; i >= 0; i--){
 
         
             for (int j = 60; j >= 0; j--){
@@ -713,7 +708,7 @@ int vista (int vista, Peca** tab) {
     }
     else{
 
-        for (int i = 4; i >= 0; i--){
+        for (int i = 47; i >= 0; i--){
 
         
             for (int j = 0; j < 60; j++){
@@ -805,7 +800,7 @@ int fazerJogada (Jogador** jogadores,Peca** tab, int l, int c, int tipo, int jgR
             jogadores[jgRef]->numAndar--;
 
             /*Criério para fim da partida*/
-            if(jogadores[jgRef]->numAndar == 10){
+            if(jogadores[jgRef]->numAndar == 0){
                 porPeca(tab, l, c, tipo, jgPecaRefAux);
                 return -1;
             }
@@ -818,6 +813,7 @@ int fazerJogada (Jogador** jogadores,Peca** tab, int l, int c, int tipo, int jgR
             jgPecaRefAux->p = NULL;
             jogadores[jgRef]->numAndar--;
 
+             /*Criério para fim da partida*/
             if(jogadores[jgRef]->numAndar == 0){
                 porPeca(tab, l, c, tipo, jgPecaRefAux);
                 return -1;
