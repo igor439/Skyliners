@@ -11,6 +11,9 @@
  Segue o exemplo do tabuleiro e a vista Sul e Leste:
 
 
+```
+
+
                  Norte
          +----+----+----+----+----+
          |( 7)|  4 |    |    |  2 | a
@@ -25,6 +28,8 @@
          +----+----+----+----+----+
             1    2    3    4    5
                    Sul
+
+
 
 () indica um edifício com um teto
 [] indica um parque
@@ -61,10 +66,11 @@ LESTE:
 ============================================================
 9 pontos
 
+```
 
 Para desenhar estas vistas podemos pensar em funções do tipo z = u(x,y) tais que dadas as coordenadas no tabuleiro (x,y) temos de volta a altura do edifício nestas coordenadas, z. Assim, a vista na perspectiva do jogador é a sobreposição dos gráficos visto através do plano x0z ou y0z quando fixamos uma das coordenadas e variamos a outra em um dos sentidos(crescendo ou decrescendo os valores). Ilustramos usando o exemplo acima.
 
-
+```
 
  y                Norte
  ^       +----+----+----+----+----+
@@ -117,5 +123,7 @@ LESTE:
 ============================================================
 9 pontos
 Vista y0z sobrepondo os gráficos para cada y dado fixo e variando x de 5 a 0.
+
+```
  
-Ainda seguindo a caracterização da nossa função, os pilares feitos  de '# diminuem a espessura conforme se afastam da vista do jogador. O que corrobora com o fenômeno da perspectiva. E isto é incorporado naturalmente na adaptação para o código e na representação de sobreposição proposta.
+Ainda seguindo a caracterização da nossa função, os pilares feitos  de '# diminuem a espessura conforme se afastam da vista do jogador. O que corrobora com o fenômeno da perspectiva. E isto é incorporado naturalmente na adaptação para o código e na representação de sobreposição proposta. O jogo acaba na rodada em que um dos jogadores zera o número de andares disponíveis para ele.
