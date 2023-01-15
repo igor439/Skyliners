@@ -4,11 +4,12 @@
 typedef struct peca Peca;
 typedef struct jogador Jogador;
 
-void Render( Peca** tab);
-Jogador** Criarjogadores();
-Peca** Init(void);
-int PorpecaA(Peca** tab, int l, int c, int tipo, Peca* peca);
+void render( Peca** tab);
+Jogador** criarjogadores();
+Peca** init(void);
 int vista (int vista, Peca** tab);
-int FazerJogada (Jogador** jogadores,Peca** tab, int l, int c, int tipo, int jgRef);
-void PrintJ (Jogador** jogador, int ref);
+int validarJogada(Jogador** jogadores,Peca** tab, int jogada, int jogadordadez);
+void PrintJ (Jogador** jogadores, int jgRef, Peca** tab);
+void vencedor (Jogador** jogador, Peca** tab);
+
 #endif
